@@ -74,6 +74,14 @@ function App() {
     setScreen('login');
   };
 
+  const handleLogin = () => {
+    setScreen('dashboard');
+  };
+
+  const handleLogout = () => {
+    setScreen('login');
+  };
+
   if (screen === 'loading') {
     return (
       <div className="loading-screen">
@@ -148,6 +156,50 @@ function App() {
     );
   }
 
+  if (screen === 'dashboard') {
+    return (
+      <div className="dashboard-screen">
+        <div className="dashboard-header">
+          <div className="dashboard-logo">
+            STUDENT <span>HUB</span>
+          </div>
+
+          <button className="logout-button" onClick={handleLogout}>
+            LOGOUT
+          </button>
+        </div>
+
+        <div className="dashboard-content">
+          <h1>Welcome to Student Hub</h1>
+
+          <p>
+            Manage your tasks, discover events, and stay organized.
+          </p>
+
+          <div className="dashboard-cards">
+            <div className="dashboard-card">
+              <h2>Tasks</h2>
+              <p>Manage your daily tasks and track your progress.</p>
+              <button>VIEW TASKS</button>
+            </div>
+
+            <div className="dashboard-card">
+              <h2>Events</h2>
+              <p>Discover upcoming college events.</p>
+              <button>VIEW EVENTS</button>
+            </div>
+
+            <div className="dashboard-card">
+              <h2>Profile</h2>
+              <p>View and manage your account details.</p>
+              <button>VIEW PROFILE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="login-screen">
       <div className="login-box">
@@ -156,7 +208,7 @@ function App() {
         <input type="email" placeholder="Email" />
         <input type="password" placeholder="Password" />
 
-        <button className="login-button">
+        <button className="login-button" onClick={handleLogin}>
           LOGIN
         </button>
 
