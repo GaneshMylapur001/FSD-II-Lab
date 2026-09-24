@@ -10,6 +10,12 @@ function App() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const [tasks, setTasks] = useState([]);
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [taskDueDate, setTaskDueDate] = useState('');
+  const [taskFilter, setTaskFilter] = useState('all');
+
   const infoText = 'Manage tasks. Discover events. Stay organized.';
 
   useEffect(() => {
@@ -81,6 +87,53 @@ function App() {
   const handleLogout = () => {
     setScreen('login');
   };
+
+  const handleAddTask = () => {
+    if (!taskTitle || !taskDescription || !taskDueDate) {
+      alert('Please fill in all task fields.');
+      return;
+    }
+
+    const newTask = {
+      id: Date.now(),
+      title: taskTitle,
+      description: taskDescription,
+      dueDate: taskDueDate,
+      completed: false,
+    };
+
+    setTasks([...tasks, newTask]);
+
+    setTaskTitle('');
+    setTaskDescription('');
+    setTaskDueDate('');
+  };
+
+  const handleCompleteTask = (id) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    );
+  };
+
+  const handleDeleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (taskFilter === 'pending') {
+      return !task.completed;
+    }
+
+    if (taskFilter === 'completed') {
+      return task.completed;
+    }
+
+    return true;
+  });
 
   if (screen === 'loading') {
     return (
@@ -156,6 +209,104 @@ function App() {
     );
   }
 
+  if (screen === 'tasks') {
+    return (
+      <div className="tasks-screen">
+        <div className="tasks-header">
+          <div className="dashboard-logo">
+            STUDENT <span>HUB</span>
+          </div>
+
+          <button
+            className="logout-button"
+            onClick={() => setScreen('dashboard')}
+          >
+            DASHBOARD
+          </button>
+        </div>
+
+        <div className="tasks-content">
+          <h1>My Tasks</h1>
+
+          <div className="task-form">
+            <input
+              type="text"
+              placeholder="Task title"
+              value={taskTitle}
+              onChange={(e) => setTaskTitle(e.target.value)}
+            />
+
+            <textarea
+              placeholder="Task description"
+              value={taskDescription}
+              onChange={(e) => setTaskDescription(e.target.value)}
+            />
+
+            <input
+              type="date"
+              value={taskDueDate}
+              onChange={(e) => setTaskDueDate(e.target.value)}
+            />
+
+            <button onClick={handleAddTask}>
+              ADD TASK
+            </button>
+          </div>
+
+          <div className="task-filters">
+            <button onClick={() => setTaskFilter('all')}>
+              ALL
+            </button>
+
+            <button onClick={() => setTaskFilter('pending')}>
+              PENDING
+            </button>
+
+            <button onClick={() => setTaskFilter('completed')}>
+              COMPLETED
+            </button>
+          </div>
+
+          <div className="task-list">
+            {filteredTasks.length === 0 ? (
+              <p className="no-tasks">No tasks available.</p>
+            ) : (
+              filteredTasks.map((task) => (
+                <div
+                  className={`task-card ${
+                    task.completed ? 'completed-task' : ''
+                  }`}
+                  key={task.id}
+                >
+                  <div>
+                    <h2>{task.title}</h2>
+                    <p>{task.description}</p>
+                    <small>Due: {task.dueDate}</small>
+                  </div>
+
+                  <div className="task-actions">
+                    <button
+                      onClick={() => handleCompleteTask(task.id)}
+                    >
+                      {task.completed ? 'UNDO' : 'COMPLETE'}
+                    </button>
+
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteTask(task.id)}
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (screen === 'dashboard') {
     return (
       <div className="dashboard-screen">
@@ -179,19 +330,30 @@ function App() {
           <div className="dashboard-cards">
             <div className="dashboard-card">
               <h2>Tasks</h2>
-              <p>Manage your daily tasks and track your progress.</p>
-              <button>VIEW TASKS</button>
+              <p>
+                Manage your daily tasks and track your progress.
+              </p>
+
+              <button onClick={() => setScreen('tasks')}>
+                VIEW TASKS
+              </button>
             </div>
 
             <div className="dashboard-card">
               <h2>Events</h2>
-              <p>Discover upcoming college events.</p>
+              <p>
+                Discover upcoming college events.
+              </p>
+
               <button>VIEW EVENTS</button>
             </div>
 
             <div className="dashboard-card">
               <h2>Profile</h2>
-              <p>View and manage your account details.</p>
+              <p>
+                View and manage your account details.
+              </p>
+
               <button>VIEW PROFILE</button>
             </div>
           </div>
