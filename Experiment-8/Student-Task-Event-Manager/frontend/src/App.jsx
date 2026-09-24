@@ -66,26 +66,24 @@ function App() {
     setScreen('login');
   };
 
-  const handleRegister = () => {
-    if (!name || !email || !password || !confirmPassword) {
-      alert('Please fill in all fields.');
-      return;
-    }
+const handleRegister = () => {
+  if (!name || !email || !password || !confirmPassword) {
+    alert('Please fill in all fields.');
+    return;
+  }
 
-    if (password !== confirmPassword) {
-      alert('Passwords do not match.');
-      return;
-    }
+  if (password !== confirmPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
 
-    alert('Account created successfully!');
+  alert('Account created successfully!');
 
-    setName('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
+  setConfirmPassword('');
+  setPassword('');
 
-    setScreen('login');
-  };
+  setScreen('login');
+};
 
   const handleLogin = () => {
     setScreen('dashboard');
@@ -166,6 +164,7 @@ function App() {
 
   const handleDeleteEvent = (id) => {
     setEvents(events.filter((event) => event.id !== id));
+
     setRegisteredEvents(
       registeredEvents.filter((eventId) => eventId !== id)
     );
@@ -276,9 +275,13 @@ function App() {
           </p>
 
           <div className="dashboard-cards">
+
             <div className="dashboard-card">
               <h2>Tasks</h2>
-              <p>Manage your daily tasks and track your progress.</p>
+
+              <p>
+                Manage your daily tasks and track your progress.
+              </p>
 
               <button onClick={() => setScreen('tasks')}>
                 VIEW TASKS
@@ -287,7 +290,10 @@ function App() {
 
             <div className="dashboard-card">
               <h2>Events</h2>
-              <p>Discover upcoming college events.</p>
+
+              <p>
+                Discover upcoming college events.
+              </p>
 
               <button onClick={() => setScreen('events')}>
                 VIEW EVENTS
@@ -296,12 +302,16 @@ function App() {
 
             <div className="dashboard-card">
               <h2>Profile</h2>
-              <p>View and manage your account details.</p>
 
-              <button>
+              <p>
+                View and manage your account details.
+              </p>
+
+              <button onClick={() => setScreen('profile')}>
                 VIEW PROFILE
               </button>
             </div>
+
           </div>
         </div>
       </div>
@@ -311,7 +321,9 @@ function App() {
   if (screen === 'tasks') {
     return (
       <div className="tasks-screen">
+
         <div className="tasks-header">
+
           <div className="dashboard-logo">
             STUDENT <span>HUB</span>
           </div>
@@ -322,12 +334,15 @@ function App() {
           >
             DASHBOARD
           </button>
+
         </div>
 
         <div className="tasks-content">
+
           <h1>My Tasks</h1>
 
           <div className="task-form">
+
             <input
               type="text"
               placeholder="Task title"
@@ -338,7 +353,9 @@ function App() {
             <textarea
               placeholder="Task description"
               value={taskDescription}
-              onChange={(e) => setTaskDescription(e.target.value)}
+              onChange={(e) =>
+                setTaskDescription(e.target.value)
+              }
             />
 
             <input
@@ -350,9 +367,11 @@ function App() {
             <button onClick={handleAddTask}>
               ADD TASK
             </button>
+
           </div>
 
           <div className="task-filters">
+
             <button onClick={() => setTaskFilter('all')}>
               ALL
             </button>
@@ -364,28 +383,40 @@ function App() {
             <button onClick={() => setTaskFilter('completed')}>
               COMPLETED
             </button>
+
           </div>
 
           <div className="task-list">
+
             {filteredTasks.length === 0 ? (
               <div className="no-tasks">
                 No tasks available.
               </div>
             ) : (
+
               filteredTasks.map((task) => (
+
                 <div
                   className={`task-card ${
                     task.completed ? 'completed-task' : ''
                   }`}
                   key={task.id}
                 >
+
                   <div>
+
                     <h2>{task.title}</h2>
+
                     <p>{task.description}</p>
-                    <small>Due: {task.dueDate}</small>
+
+                    <small>
+                      Due: {task.dueDate}
+                    </small>
+
                   </div>
 
                   <div className="task-actions">
+
                     <button
                       onClick={() =>
                         handleCompleteTask(task.id)
@@ -402,20 +433,29 @@ function App() {
                     >
                       DELETE
                     </button>
+
                   </div>
+
                 </div>
+
               ))
+
             )}
+
           </div>
+
         </div>
+
       </div>
     );
   }
 
-  if (screen === 'events') {
+  if (screen === 'profile') {
     return (
-      <div className="events-screen">
-        <div className="events-header">
+      <div className="profile-screen">
+
+        <div className="profile-header">
+
           <div className="dashboard-logo">
             STUDENT <span>HUB</span>
           </div>
@@ -426,12 +466,72 @@ function App() {
           >
             DASHBOARD
           </button>
+
+        </div>
+
+        <div className="profile-content">
+
+          <h1>My Profile</h1>
+
+          <div className="profile-card">
+
+            <div className="profile-item">
+              <span>Name</span>
+
+              <strong>
+                {name || 'Student'}
+              </strong>
+            </div>
+
+            <div className="profile-item">
+              <span>Email</span>
+
+              <strong>
+                {email || 'student@example.com'}
+              </strong>
+            </div>
+
+            <div className="profile-item">
+              <span>Account</span>
+
+              <strong>
+                Student Account
+              </strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    );
+  }
+
+  if (screen === 'events') {
+    return (
+      <div className="events-screen">
+
+        <div className="events-header">
+
+          <div className="dashboard-logo">
+            STUDENT <span>HUB</span>
+          </div>
+
+          <button
+            className="logout-button"
+            onClick={() => setScreen('dashboard')}
+          >
+            DASHBOARD
+          </button>
+
         </div>
 
         <div className="events-content">
+
           <h1>College Events</h1>
 
           <div className="event-form">
+
             <input
               type="text"
               placeholder="Event title"
@@ -463,17 +563,26 @@ function App() {
             <button onClick={handleAddEvent}>
               ADD EVENT
             </button>
+
           </div>
 
           <div className="event-list">
+
             {events.length === 0 ? (
               <div className="no-events">
                 No events available.
               </div>
             ) : (
+
               events.map((event) => (
-                <div className="event-card" key={event.id}>
+
+                <div
+                  className="event-card"
+                  key={event.id}
+                >
+
                   <div>
+
                     <h2>{event.title}</h2>
 
                     <p>{event.description}</p>
@@ -485,9 +594,11 @@ function App() {
                     <small>
                       Venue: {event.venue}
                     </small>
+
                   </div>
 
                   <div className="event-actions">
+
                     <button
                       onClick={() =>
                         handleRegisterEvent(event.id)
@@ -506,22 +617,34 @@ function App() {
                     >
                       DELETE
                     </button>
+
                   </div>
+
                 </div>
+
               ))
+
             )}
+
           </div>
+
         </div>
+
       </div>
     );
   }
 
   return (
     <div className="login-screen">
+
       <div className="login-box">
+
         <h1>LOGIN</h1>
 
-        <input type="email" placeholder="Email" />
+        <input
+          type="email"
+          placeholder="Email"
+        />
 
         <input
           type="password"
@@ -537,11 +660,14 @@ function App() {
 
         <p>
           Don't have an account?{' '}
+
           <span onClick={() => setScreen('register')}>
             Create Account
           </span>
         </p>
+
       </div>
+
     </div>
   );
 }
