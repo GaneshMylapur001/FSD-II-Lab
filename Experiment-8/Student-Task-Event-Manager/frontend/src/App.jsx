@@ -16,6 +16,13 @@ function App() {
   const [taskDueDate, setTaskDueDate] = useState('');
   const [taskFilter, setTaskFilter] = useState('all');
 
+  const [events, setEvents] = useState([]);
+  const [eventTitle, setEventTitle] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [eventVenue, setEventVenue] = useState('');
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+
   const infoText = 'Manage tasks. Discover events. Stay organized.';
 
   useEffect(() => {
@@ -99,7 +106,7 @@ function App() {
       title: taskTitle,
       description: taskDescription,
       dueDate: taskDueDate,
-      completed: false,
+      completed: false
     };
 
     setTasks([...tasks, newTask]);
@@ -134,6 +141,45 @@ function App() {
 
     return true;
   });
+
+  const handleAddEvent = () => {
+    if (!eventTitle || !eventDescription || !eventDate || !eventVenue) {
+      alert('Please fill in all event fields.');
+      return;
+    }
+
+    const newEvent = {
+      id: Date.now(),
+      title: eventTitle,
+      description: eventDescription,
+      date: eventDate,
+      venue: eventVenue
+    };
+
+    setEvents([...events, newEvent]);
+
+    setEventTitle('');
+    setEventDescription('');
+    setEventDate('');
+    setEventVenue('');
+  };
+
+  const handleDeleteEvent = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
+    setRegisteredEvents(
+      registeredEvents.filter((eventId) => eventId !== id)
+    );
+  };
+
+  const handleRegisterEvent = (id) => {
+    if (registeredEvents.includes(id)) {
+      setRegisteredEvents(
+        registeredEvents.filter((eventId) => eventId !== id)
+      );
+    } else {
+      setRegisteredEvents([...registeredEvents, id]);
+    }
+  };
 
   if (screen === 'loading') {
     return (
@@ -209,6 +255,59 @@ function App() {
     );
   }
 
+  if (screen === 'dashboard') {
+    return (
+      <div className="dashboard-screen">
+        <div className="dashboard-header">
+          <div className="dashboard-logo">
+            STUDENT <span>HUB</span>
+          </div>
+
+          <button className="logout-button" onClick={handleLogout}>
+            LOGOUT
+          </button>
+        </div>
+
+        <div className="dashboard-content">
+          <h1>Welcome to Student Hub</h1>
+
+          <p>
+            Manage your tasks, discover events, and stay organized.
+          </p>
+
+          <div className="dashboard-cards">
+            <div className="dashboard-card">
+              <h2>Tasks</h2>
+              <p>Manage your daily tasks and track your progress.</p>
+
+              <button onClick={() => setScreen('tasks')}>
+                VIEW TASKS
+              </button>
+            </div>
+
+            <div className="dashboard-card">
+              <h2>Events</h2>
+              <p>Discover upcoming college events.</p>
+
+              <button onClick={() => setScreen('events')}>
+                VIEW EVENTS
+              </button>
+            </div>
+
+            <div className="dashboard-card">
+              <h2>Profile</h2>
+              <p>View and manage your account details.</p>
+
+              <button>
+                VIEW PROFILE
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (screen === 'tasks') {
     return (
       <div className="tasks-screen">
@@ -269,7 +368,9 @@ function App() {
 
           <div className="task-list">
             {filteredTasks.length === 0 ? (
-              <p className="no-tasks">No tasks available.</p>
+              <div className="no-tasks">
+                No tasks available.
+              </div>
             ) : (
               filteredTasks.map((task) => (
                 <div
@@ -286,14 +387,18 @@ function App() {
 
                   <div className="task-actions">
                     <button
-                      onClick={() => handleCompleteTask(task.id)}
+                      onClick={() =>
+                        handleCompleteTask(task.id)
+                      }
                     >
                       {task.completed ? 'UNDO' : 'COMPLETE'}
                     </button>
 
                     <button
                       className="delete-button"
-                      onClick={() => handleDeleteTask(task.id)}
+                      onClick={() =>
+                        handleDeleteTask(task.id)
+                      }
                     >
                       DELETE
                     </button>
@@ -307,55 +412,104 @@ function App() {
     );
   }
 
-  if (screen === 'dashboard') {
+  if (screen === 'events') {
     return (
-      <div className="dashboard-screen">
-        <div className="dashboard-header">
+      <div className="events-screen">
+        <div className="events-header">
           <div className="dashboard-logo">
             STUDENT <span>HUB</span>
           </div>
 
-          <button className="logout-button" onClick={handleLogout}>
-            LOGOUT
+          <button
+            className="logout-button"
+            onClick={() => setScreen('dashboard')}
+          >
+            DASHBOARD
           </button>
         </div>
 
-        <div className="dashboard-content">
-          <h1>Welcome to Student Hub</h1>
+        <div className="events-content">
+          <h1>College Events</h1>
 
-          <p>
-            Manage your tasks, discover events, and stay organized.
-          </p>
+          <div className="event-form">
+            <input
+              type="text"
+              placeholder="Event title"
+              value={eventTitle}
+              onChange={(e) => setEventTitle(e.target.value)}
+            />
 
-          <div className="dashboard-cards">
-            <div className="dashboard-card">
-              <h2>Tasks</h2>
-              <p>
-                Manage your daily tasks and track your progress.
-              </p>
+            <textarea
+              placeholder="Event description"
+              value={eventDescription}
+              onChange={(e) =>
+                setEventDescription(e.target.value)
+              }
+            />
 
-              <button onClick={() => setScreen('tasks')}>
-                VIEW TASKS
-              </button>
-            </div>
+            <input
+              type="date"
+              value={eventDate}
+              onChange={(e) => setEventDate(e.target.value)}
+            />
 
-            <div className="dashboard-card">
-              <h2>Events</h2>
-              <p>
-                Discover upcoming college events.
-              </p>
+            <input
+              type="text"
+              placeholder="Venue"
+              value={eventVenue}
+              onChange={(e) => setEventVenue(e.target.value)}
+            />
 
-              <button>VIEW EVENTS</button>
-            </div>
+            <button onClick={handleAddEvent}>
+              ADD EVENT
+            </button>
+          </div>
 
-            <div className="dashboard-card">
-              <h2>Profile</h2>
-              <p>
-                View and manage your account details.
-              </p>
+          <div className="event-list">
+            {events.length === 0 ? (
+              <div className="no-events">
+                No events available.
+              </div>
+            ) : (
+              events.map((event) => (
+                <div className="event-card" key={event.id}>
+                  <div>
+                    <h2>{event.title}</h2>
 
-              <button>VIEW PROFILE</button>
-            </div>
+                    <p>{event.description}</p>
+
+                    <small>
+                      Date: {event.date}
+                    </small>
+
+                    <small>
+                      Venue: {event.venue}
+                    </small>
+                  </div>
+
+                  <div className="event-actions">
+                    <button
+                      onClick={() =>
+                        handleRegisterEvent(event.id)
+                      }
+                    >
+                      {registeredEvents.includes(event.id)
+                        ? 'REGISTERED'
+                        : 'REGISTER'}
+                    </button>
+
+                    <button
+                      className="delete-button"
+                      onClick={() =>
+                        handleDeleteEvent(event.id)
+                      }
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -368,9 +522,16 @@ function App() {
         <h1>LOGIN</h1>
 
         <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
 
-        <button className="login-button" onClick={handleLogin}>
+        <input
+          type="password"
+          placeholder="Password"
+        />
+
+        <button
+          className="login-button"
+          onClick={handleLogin}
+        >
           LOGIN
         </button>
 
