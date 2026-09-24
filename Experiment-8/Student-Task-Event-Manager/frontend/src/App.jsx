@@ -5,9 +5,13 @@ function App() {
   const [screen, setScreen] = useState('loading');
   const [typedText, setTypedText] = useState('');
 
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const infoText = 'Manage tasks. Discover events. Stay organized.';
 
-  // Loading screen → Information screen
   useEffect(() => {
     if (screen !== 'loading') return;
 
@@ -18,7 +22,6 @@ function App() {
     return () => clearTimeout(timer);
   }, [screen]);
 
-  // Typing animation
   useEffect(() => {
     if (screen !== 'info') return;
 
@@ -36,7 +39,6 @@ function App() {
     return () => clearInterval(typingTimer);
   }, [screen]);
 
-  // Information screen → Login after 5 seconds
   useEffect(() => {
     if (screen !== 'info') return;
 
@@ -47,12 +49,31 @@ function App() {
     return () => clearTimeout(timer);
   }, [screen]);
 
-  // Skip button
   const skipInfo = () => {
     setScreen('login');
   };
 
-  // Loading Screen
+  const handleRegister = () => {
+    if (!name || !email || !password || !confirmPassword) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    alert('Account created successfully!');
+
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+
+    setScreen('login');
+  };
+
   if (screen === 'loading') {
     return (
       <div className="loading-screen">
@@ -64,7 +85,6 @@ function App() {
     );
   }
 
-  // Information Screen
   if (screen === 'info') {
     return (
       <div className="info-screen">
@@ -79,22 +99,62 @@ function App() {
     );
   }
 
-  // Login Screen
+  if (screen === 'register') {
+    return (
+      <div className="login-screen">
+        <div className="login-box">
+          <h1>CREATE ACCOUNT</h1>
+
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
+          <button className="login-button" onClick={handleRegister}>
+            CREATE ACCOUNT
+          </button>
+
+          <p>
+            Already have an account?{' '}
+            <span onClick={() => setScreen('login')}>
+              Login
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="login-screen">
       <div className="login-box">
-
         <h1>LOGIN</h1>
 
-        <input
-          type="email"
-          placeholder="Email"
-        />
-
-        <input
-          type="password"
-          placeholder="Password"
-        />
+        <input type="email" placeholder="Email" />
+        <input type="password" placeholder="Password" />
 
         <button className="login-button">
           LOGIN
@@ -102,9 +162,10 @@ function App() {
 
         <p>
           Don't have an account?{' '}
-          <span>Create Account</span>
+          <span onClick={() => setScreen('register')}>
+            Create Account
+          </span>
         </p>
-
       </div>
     </div>
   );
